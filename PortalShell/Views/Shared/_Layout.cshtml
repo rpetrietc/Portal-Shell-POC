@@ -1,5 +1,9 @@
 ﻿@{
     var pageTitle = ViewData["Title"]?.ToString() ?? "Portal Shell";
+
+    var currentPath = Context.Request.Path;
+    var isHome = currentPath == "/";
+    var isServiceDemo = currentPath.StartsWithSegments("/ServiceDemo");
 }
 
 <!DOCTYPE html>
@@ -47,13 +51,31 @@
 
         <gcds-side-nav label="Portal navigation">
 
-            <gcds-nav-link href="/">
-                Home
-            </gcds-nav-link>
+            @if (isHome)
+            {
+                <gcds-nav-link href="/" current>
+                    Home
+                </gcds-nav-link>
+            }
+            else
+            {
+                <gcds-nav-link href="/">
+                    Home
+                </gcds-nav-link>
+            }
 
-            <gcds-nav-link href="/ServiceDemo/Embedded">
-                Embedded service demo
-            </gcds-nav-link>
+            @if (isServiceDemo)
+            {
+                <gcds-nav-link href="/ServiceDemo/Embedded" current>
+                    Embedded service demo
+                </gcds-nav-link>
+            }
+            else
+            {
+                <gcds-nav-link href="/ServiceDemo/Embedded">
+                    Embedded service demo
+                </gcds-nav-link>
+            }
 
             <gcds-nav-link href="#">
                 My applications
