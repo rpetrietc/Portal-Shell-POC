@@ -45,9 +45,19 @@
         title="Civil Aviation regional office map">
 </iframe>
 
+<p style="margin-top: 1rem;">
+    <a id="openMapLink"
+       href="#"
+       target="_blank"
+       rel="noopener noreferrer">
+        Open selected office in a new tab
+    </a>
+</p>
+
 <script>
     const officeSelect = document.getElementById("officeSelect");
     const officeMap = document.getElementById("officeMap");
+    const openMapLink = document.getElementById("openMapLink");
 
     officeSelect.addEventListener("change", function () {
         if (!officeSelect.value) {
@@ -58,7 +68,6 @@
         const latitude = parseFloat(coordinates[0]);
         const longitude = parseFloat(coordinates[1]);
 
-        // Create a small map area around the selected location.
         const latitudeOffset = 0.025;
         const longitudeOffset = 0.04;
 
@@ -72,5 +81,10 @@
             `?bbox=${west},${south},${east},${north}` +
             `&layer=mapnik` +
             `&marker=${latitude},${longitude}`;
+
+        openMapLink.href =
+            `https://www.openstreetmap.org/` +
+            `?mlat=${latitude}&mlon=${longitude}` +
+            `#map=14/${latitude}/${longitude}`;
     });
 </script>
