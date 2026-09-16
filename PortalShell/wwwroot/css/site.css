@@ -36,3 +36,28 @@ body {
     height: 70vh;
     border: 1px solid #ccc;
 }
+
+    /* Displays the embedded service across the full page while in focus mode. */
+    .embedded-service.focus-mode {
+        position: fixed;
+        inset: 0;
+        width: 100vw;
+        height: 100vh;
+        max-width: none;
+        border: 0;
+        z-index: 9998;
+    }
+
+/* Provides a way to return to the normal portal layout. */
+.focus-mode-exit {
+    position: fixed;
+    top: 1rem;
+    right: 1rem;
+    z-index: 9999;
+    padding: 0.75rem 1rem;
+    cursor: pointer;
+}
+
+body.focus-mode-active {
+    overflow: hidden;
+}

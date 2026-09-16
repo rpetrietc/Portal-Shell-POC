@@ -14,8 +14,8 @@
 
     <title>@pageTitle - Portal Shell</title>
 
-    @* Government of Canada Design System.
-       used for its header, navigation and footer. *@
+    @* Government of Canada Design System components used
+       for the common header, navigation and footer. *@
     <link rel="stylesheet"
           href="https://cdn.design-system.alpha.canada.ca/@@cdssnc/gcds-components@0.43.1/dist/gcds/gcds.css" />
 
@@ -35,21 +35,24 @@
 
     @* Common Government of Canada header.
        This stays visible while the user moves between portal services. *@
-    <gcds-header lang-href="#"
+    <gcds-header id="portalHeader"
+                 lang-href="#"
                  skip-to-href="#main-content">
     </gcds-header>
 
     @* Basic portal shell.
        The left side is navigation and the right side is where page/service
        content will be displayed. *@
-    <gcds-grid tag="div"
+    <gcds-grid id="portalGrid"
+               tag="div"
                container="xl"
                columns="1fr"
                columns-desktop="320px minmax(0, 1fr)"
                gap="400"
                centered>
 
-        <gcds-side-nav label="Portal navigation">
+        <gcds-side-nav id="portalNavigation"
+                       label="Portal navigation">
 
             @if (isHome)
             {

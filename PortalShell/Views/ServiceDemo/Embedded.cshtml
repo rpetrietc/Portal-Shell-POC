@@ -8,6 +8,8 @@
     Select a Civil Aviation regional office to display its location on the map.
 </p>
 
+@* Office selector used to update both the embedded map
+   and the external map link. *@
 <div style="margin-bottom: 1.5rem;">
     <label for="officeSelect">
         <strong>Civil Aviation regional office</strong>
@@ -39,12 +41,24 @@
     </select>
 </div>
 
+@* Displays the selected location inside the portal shell. *@
 <iframe id="officeMap"
         class="embedded-service"
         src="https://www.openstreetmap.org/export/embed.html?bbox=-79.50,43.70,-79.32,43.82&layer=mapnik"
         title="Civil Aviation regional office map">
 </iframe>
 
+@* Provides a visible way to leave full-screen focus mode.
+   The Escape key can also be used. *@
+<button id="exitFocusMode"
+        type="button"
+        class="focus-mode-exit"
+        hidden>
+    Exit focus mode
+</button>
+
+@* Opens the currently selected location outside the portal
+   so the embedded and external navigation approaches can be compared. *@
 <p style="margin-top: 1rem;">
     <a id="openMapLink"
        href="#"
@@ -55,10 +69,12 @@
 </p>
 
 <script>
+    // Get references to the controls used by the map selector.
     const officeSelect = document.getElementById("officeSelect");
     const officeMap = document.getElementById("officeMap");
     const openMapLink = document.getElementById("openMapLink");
 
+    // Update the map whenever a different office is selected.
     officeSelect.addEventListener("change", function () {
         if (!officeSelect.value) {
             return;
@@ -68,6 +84,7 @@
         const latitude = parseFloat(coordinates[0]);
         const longitude = parseFloat(coordinates[1]);
 
+        // Create a small map boundary around the selected location.
         const latitudeOffset = 0.025;
         const longitudeOffset = 0.04;
 
@@ -76,15 +93,58 @@
         const east = longitude + longitudeOffset;
         const north = latitude + latitudeOffset;
 
+        // Reload the embedded map at the selected office location.
         officeMap.src =
             `https://www.openstreetmap.org/export/embed.html` +
             `?bbox=${west},${south},${east},${north}` +
             `&layer=mapnik` +
             `&marker=${latitude},${longitude}`;
 
+        // Keep the external link pointed at the same selected location.
         openMapLink.href =
             `https://www.openstreetmap.org/` +
             `?mlat=${latitude}&mlon=${longitude}` +
             `#map=14/${latitude}/${longitude}`;
+    });
+
+    // Get references to the portal elements used by focus mode.
+    const portalHeader = document.getElementById("portalHeader");
+    const portalNavigation = document.getElementById("portalNavigation");
+    const exitFocusMode = document.getElementById("exitFocusMode");
+
+    // Hide the surrounding portal chrome and let the embedded
+    // service use the full browser content area.
+    function enterFocusMode() {
+        portalHeader.style.display = "none";
+        portalNavigation.style.display = "none";
+
+        officeMap.classList.add("focus-mode");
+        document.body.classList.add("focus-mode-active");
+
+        exitFocusMode.hidden = false;
+    }
+
+    // Restore the normal portal layout.
+    function leaveFocusMode() {
+        portalHeader.style.display = "";
+        portalNavigation.style.display = "";
+
+        officeMap.classList.remove("focus-mode");
+        document.body.classList.remove("focus-mode-active");
+
+        exitFocusMode.hidden = true;
+    }
+
+    // Enter focus mode when the user starts interacting with the map.
+    officeMap.addEventListener("mouseenter", enterFocusMode);
+
+    // Allow the user to return to the normal portal layout.
+    exitFocusMode.addEventListener("click", leaveFocusMode);
+
+    // Escape provides a keyboard-friendly way to leave focus mode.
+    document.addEventListener("keydown", function (event) {
+        if (event.key === "Escape") {
+            leaveFocusMode();
+        }
     });
 </script>
