@@ -5,11 +5,72 @@
 <h1>Embedded service</h1>
 
 <p>
-    This page demonstrates loading another web application
-    inside the portal shell.
+    Select a Civil Aviation regional office to display its location on the map.
 </p>
 
-<iframe class="embedded-service"
-        src="https://www.openstreetmap.org/export/embed.html?bbox=-75.8,45.2,-75.5,45.5&layer=mapnik"
-        title="Embedded map">
+<div style="margin-bottom: 1.5rem;">
+    <label for="officeSelect">
+        <strong>Civil Aviation regional office</strong>
+    </label>
+
+    <select id="officeSelect"
+            style="display: block; margin-top: 0.5rem; padding: 0.5rem; min-width: 320px;">
+        <option value="">Select an office</option>
+
+        <option value="49.282924,-123.122811">
+            Pacific Region - Vancouver
+        </option>
+
+        <option value="49.89428,-97.14871">
+            Prairie and Northern Region - Winnipeg
+        </option>
+
+        <option value="43.76335,-79.412895">
+            Ontario Region - Toronto
+        </option>
+
+        <option value="45.455,-73.750">
+            Quebec Region - Dorval
+        </option>
+
+        <option value="46.08541,-64.78044">
+            Atlantic Region - Moncton
+        </option>
+    </select>
+</div>
+
+<iframe id="officeMap"
+        class="embedded-service"
+        src="https://www.openstreetmap.org/export/embed.html?bbox=-79.50,43.70,-79.32,43.82&layer=mapnik"
+        title="Civil Aviation regional office map">
 </iframe>
+
+<script>
+    const officeSelect = document.getElementById("officeSelect");
+    const officeMap = document.getElementById("officeMap");
+
+    officeSelect.addEventListener("change", function () {
+        if (!officeSelect.value) {
+            return;
+        }
+
+        const coordinates = officeSelect.value.split(",");
+        const latitude = parseFloat(coordinates[0]);
+        const longitude = parseFloat(coordinates[1]);
+
+        // Create a small map area around the selected location.
+        const latitudeOffset = 0.025;
+        const longitudeOffset = 0.04;
+
+        const west = longitude - longitudeOffset;
+        const south = latitude - latitudeOffset;
+        const east = longitude + longitudeOffset;
+        const north = latitude + latitudeOffset;
+
+        officeMap.src =
+            `https://www.openstreetmap.org/export/embed.html` +
+            `?bbox=${west},${south},${east},${north}` +
+            `&layer=mapnik` +
+            `&marker=${latitude},${longitude}`;
+    });
+</script>
