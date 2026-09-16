@@ -1,50 +1,84 @@
-﻿<!DOCTYPE html>
+﻿@{
+    var pageTitle = ViewData["Title"]?.ToString() ?? "Portal Shell";
+}
+
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>@ViewData["Title"] - PortalShell</title>
-    <script type="importmap"></script>
-    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
-    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
-    <link rel="stylesheet" href="~/PortalShell.styles.css" asp-append-version="true" />
-</head>
-<body>
-    <header>
-        <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
-            <div class="container-fluid">
-                <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">PortalShell</a>
-                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
-                        aria-expanded="false" aria-label="Toggle navigation">
-                    <span class="navbar-toggler-icon"></span>
-                </button>
-                <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
-                    <ul class="navbar-nav flex-grow-1">
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
-                        </li>
-                    </ul>
-                </div>
-            </div>
-        </nav>
-    </header>
-    <div class="container">
-        <main role="main" class="pb-3">
-            @RenderBody()
-        </main>
-    </div>
 
-    <footer class="border-top footer text-muted">
-        <div class="container">
-            &copy; 2026 - PortalShell - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
-        </div>
-    </footer>
-    <script src="~/lib/jquery/dist/jquery.min.js"></script>
-    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="~/js/site.js" asp-append-version="true"></script>
+    <title>@pageTitle - Portal Shell</title>
+
+    @* Government of Canada Design System.
+       EPL-LEP uses these components for its header, navigation and footer. *@
+    <link rel="stylesheet"
+          href="https://cdn.design-system.alpha.canada.ca/@@cdssnc/gcds-components@0.43.1/dist/gcds/gcds.css" />
+
+    <script type="module"
+            src="https://cdn.design-system.alpha.canada.ca/@@cdssnc/gcds-components@0.43.1/dist/gcds/gcds.esm.js">
+    </script>
+
+    <link rel="stylesheet"
+          href="https://cdn.design-system.alpha.canada.ca/@@gcds-core/css-shortcuts@1.0.1/dist/gcds-css-shortcuts.min.css" />
+
+    <link rel="stylesheet"
+          href="~/css/site.css"
+          asp-append-version="true" />
+</head>
+
+<body>
+
+    @* Common Government of Canada header.
+       This stays visible while the user moves between portal services. *@
+    <gcds-header lang-href="#"
+                 skip-to-href="#main-content">
+    </gcds-header>
+
+    @* Basic portal shell.
+       The left side is navigation and the right side is where page/service
+       content will be displayed. *@
+    <gcds-grid tag="div"
+               container="xl"
+               columns="1fr"
+               columns-desktop="320px minmax(0, 1fr)"
+               gap="400"
+               centered>
+
+        <gcds-side-nav label="Portal navigation">
+
+            <gcds-nav-link href="/" current>
+                Home
+            </gcds-nav-link>
+
+            <gcds-nav-link href="#">
+                My applications
+            </gcds-nav-link>
+
+            <gcds-nav-link href="#">
+                My documents
+            </gcds-nav-link>
+
+            <gcds-nav-link href="#">
+                Start a service request
+            </gcds-nav-link>
+
+        </gcds-side-nav>
+
+        <main id="main-content"
+              role="main"
+              style="padding-top: 2rem; padding-bottom: 3rem;">
+
+            @RenderBody()
+
+        </main>
+
+    </gcds-grid>
+
+    @* Common Government of Canada footer. *@
+    <gcds-footer></gcds-footer>
+
     @await RenderSectionAsync("Scripts", required: false)
+
 </body>
 </html>
