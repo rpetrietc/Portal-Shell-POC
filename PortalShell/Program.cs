@@ -1,7 +1,16 @@
+using GoC.WebTemplate.Components.Core.Services;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
+
+// Required by the Government of Canada Web Template.
+// ModelAccessor provides the template model used by controllers and views.
+builder.Services.AddModelAccessor();
+
+// Configures the English/French request localization used by the template.
+builder.Services.ConfigureGoCTemplateRequestLocalization();
 
 var app = builder.Build();
 
