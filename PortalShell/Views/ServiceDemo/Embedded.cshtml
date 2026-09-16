@@ -74,11 +74,28 @@
     const officeMap = document.getElementById("officeMap");
     const openMapLink = document.getElementById("openMapLink");
 
+    // Get references to the portal elements used by focus mode.
+    const portalHeader = document.getElementById("portalHeader");
+    const portalNavigation = document.getElementById("portalNavigation");
+    const exitFocusMode = document.getElementById("exitFocusMode");
+
+    // Temporarily prevents focus mode from starting when the dropdown closes
+    // and the mouse happens to be positioned over the map.
+    let suppressFocusMode = false;
+
     // Update the map whenever a different office is selected.
     officeSelect.addEventListener("change", function () {
         if (!officeSelect.value) {
             return;
         }
+
+        // Prevent the map from entering focus mode immediately
+        // after the dropdown selection is made.
+        suppressFocusMode = true;
+
+        setTimeout(function () {
+            suppressFocusMode = false;
+        }, 500);
 
         const coordinates = officeSelect.value.split(",");
         const latitude = parseFloat(coordinates[0]);
@@ -107,11 +124,6 @@
             `#map=14/${latitude}/${longitude}`;
     });
 
-    // Get references to the portal elements used by focus mode.
-    const portalHeader = document.getElementById("portalHeader");
-    const portalNavigation = document.getElementById("portalNavigation");
-    const exitFocusMode = document.getElementById("exitFocusMode");
-
     // Hide the surrounding portal chrome and let the embedded
     // service use the full browser content area.
     function enterFocusMode() {
@@ -135,8 +147,12 @@
         exitFocusMode.hidden = true;
     }
 
-    // Enter focus mode when the user starts interacting with the map.
-    officeMap.addEventListener("mouseenter", enterFocusMode);
+    // Enter focus mode only when the user deliberately moves onto the map.
+    officeMap.addEventListener("mouseenter", function () {
+        if (!suppressFocusMode) {
+            enterFocusMode();
+        }
+    });
 
     // Allow the user to return to the normal portal layout.
     exitFocusMode.addEventListener("click", leaveFocusMode);
