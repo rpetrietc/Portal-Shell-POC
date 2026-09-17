@@ -41,12 +41,18 @@
     </select>
 </div>
 
-@* Displays the selected location inside the portal shell. *@
-<iframe id="officeMap"
-        class="embedded-service"
-        src="https://www.openstreetmap.org/export/embed.html?bbox=-79.50,43.70,-79.32,43.82&layer=mapnik"
-        title="Civil Aviation regional office map">
-</iframe>
+@* The container keeps the map's original space in the page
+   while the iframe temporarily moves into full-screen focus mode. *@
+<div id="mapContainer"
+     class="embedded-service-container">
+
+    <iframe id="officeMap"
+            class="embedded-service"
+            src="https://www.openstreetmap.org/export/embed.html?bbox=-79.50,43.70,-79.32,43.82&layer=mapnik"
+            title="Civil Aviation regional office map">
+    </iframe>
+
+</div>
 
 @* Provides a visible way to leave full-screen focus mode.
    The Escape key can also be used. *@
@@ -72,6 +78,7 @@
     // Get references to the controls used by the map selector.
     const officeSelect = document.getElementById("officeSelect");
     const officeMap = document.getElementById("officeMap");
+    const mapContainer = document.getElementById("mapContainer");
     const openMapLink = document.getElementById("openMapLink");
 
     // Get references to the portal elements used by focus mode.
@@ -82,6 +89,9 @@
     // Temporarily prevents focus mode from starting when the dropdown closes
     // and the mouse happens to be positioned over the map.
     let suppressFocusMode = false;
+
+    // Tracks whether the map is currently displayed in focus mode.
+    let focusModeActive = false;
 
     // Update the map whenever a different office is selected.
     officeSelect.addEventListener("change", function () {
@@ -124,32 +134,77 @@
             `#map=14/${latitude}/${longitude}`;
     });
 
-    // Hide the surrounding portal chrome and let the embedded
-    // service use the full browser content area.
+    // Smoothly expand the embedded service from its current position
+    // to the full browser content area.
     function enterFocusMode() {
-        portalHeader.style.display = "none";
-        portalNavigation.style.display = "none";
+        if (focusModeActive) {
+            return;
+        }
+
+        focusModeActive = true;
+
+        // Remember the map's current position and size before
+        // moving it into the full-screen layer.
+        const startPosition = mapContainer.getBoundingClientRect();
+
+        officeMap.style.top = `${startPosition.top}px`;
+        officeMap.style.left = `${startPosition.left}px`;
+        officeMap.style.width = `${startPosition.width}px`;
+        officeMap.style.height = `${startPosition.height}px`;
 
         officeMap.classList.add("focus-mode");
-        document.body.classList.add("focus-mode-active");
 
+        // Force the browser to recognize the starting position
+        // before beginning the animation.
+        void officeMap.offsetWidth;
+
+        document.body.classList.add("focus-mode-active");
         exitFocusMode.hidden = false;
+
+        // Animate the map from its original location to full screen.
+        requestAnimationFrame(function () {
+            officeMap.style.top = "0";
+            officeMap.style.left = "0";
+            officeMap.style.width = "100vw";
+            officeMap.style.height = "100vh";
+        });
     }
 
-    // Restore the normal portal layout.
+    // Smoothly return the embedded service to its original position.
     function leaveFocusMode() {
-        portalHeader.style.display = "";
-        portalNavigation.style.display = "";
+        if (!focusModeActive) {
+            return;
+        }
 
-        officeMap.classList.remove("focus-mode");
+        focusModeActive = false;
+
+        const endPosition = mapContainer.getBoundingClientRect();
+
+        // Bring the surrounding portal layout back while
+        // the service shrinks into its original position.
         document.body.classList.remove("focus-mode-active");
-
         exitFocusMode.hidden = true;
+
+        officeMap.style.top = `${endPosition.top}px`;
+        officeMap.style.left = `${endPosition.left}px`;
+        officeMap.style.width = `${endPosition.width}px`;
+        officeMap.style.height = `${endPosition.height}px`;
+
+        // Wait for the animation to finish before returning
+        // the iframe to its normal position in the page.
+        setTimeout(function () {
+            officeMap.classList.remove("focus-mode");
+
+            officeMap.style.top = "";
+            officeMap.style.left = "";
+            officeMap.style.width = "";
+            officeMap.style.height = "";
+        }, 350);
     }
 
     // Enter focus mode only when the user deliberately moves onto the map.
     officeMap.addEventListener("mouseenter", function () {
-        if (!suppressFocusMode) {
+        if (!suppressFocusMode && !focusModeActive) {
             enterFocusMode();
         }
     });

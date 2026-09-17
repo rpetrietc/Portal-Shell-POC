@@ -1,52 +1,87 @@
 html {
-  font-size: 14px;
+    font-size: 14px;
 }
 
 @media (min-width: 768px) {
-  html {
-    font-size: 16px;
-  }
+    html {
+        font-size: 16px;
+    }
 }
 
-.btn:focus, .btn:active:focus, .btn-link.nav-link:focus, .form-control:focus, .form-check-input:focus {
-  box-shadow: 0 0 0 0.1rem white, 0 0 0 0.25rem #258cfb;
+.btn:focus,
+.btn:active:focus,
+.btn-link.nav-link:focus,
+.form-control:focus,
+.form-check-input:focus {
+    box-shadow: 0 0 0 0.1rem white, 0 0 0 0.25rem #258cfb;
 }
 
 html {
-  position: relative;
-  min-height: 100%;
+    position: relative;
+    min-height: 100%;
 }
 
 body {
-  margin-bottom: 60px;
+    margin-bottom: 60px;
 }
 
-.form-floating > .form-control-plaintext::placeholder, .form-floating > .form-control::placeholder {
-  color: var(--bs-secondary-color);
-  text-align: end;
+.form-floating > .form-control-plaintext::placeholder,
+.form-floating > .form-control::placeholder {
+    color: var(--bs-secondary-color);
+    text-align: end;
 }
 
-.form-floating > .form-control-plaintext:focus::placeholder, .form-floating > .form-control:focus::placeholder {
-  text-align: start;
+.form-floating > .form-control-plaintext:focus::placeholder,
+.form-floating > .form-control:focus::placeholder {
+    text-align: start;
+}
+
+/* Keeps the normal map area in place while the embedded service
+   temporarily moves into full-screen focus mode. */
+.embedded-service-container {
+    width: 100%;
+    height: 70vh;
 }
 
 /* Provides a large content area for services displayed inside the portal shell. */
 .embedded-service {
+    display: block;
     width: 100%;
-    height: 70vh;
+    height: 100%;
     border: 1px solid #ccc;
 }
 
-    /* Displays the embedded service across the full page while in focus mode. */
+    /* Allows the embedded service to animate smoothly between
+   its normal position and the full browser content area. */
     .embedded-service.focus-mode {
         position: fixed;
-        inset: 0;
-        width: 100vw;
-        height: 100vh;
+        margin: 0;
         max-width: none;
         border: 0;
         z-index: 9998;
+        transition: top 350ms ease-in-out, left 350ms ease-in-out, width 350ms ease-in-out, height 350ms ease-in-out;
     }
+
+/* Slide the portal header and navigation out of view instead
+   of removing them immediately. */
+#portalHeader,
+#portalNavigation {
+    transition: transform 350ms ease-in-out, opacity 250ms ease-in-out;
+}
+
+/* Move the header upward while focus mode is active. */
+body.focus-mode-active #portalHeader {
+    transform: translateY(-110%);
+    opacity: 0;
+    pointer-events: none;
+}
+
+/* Move the side navigation to the left while focus mode is active. */
+body.focus-mode-active #portalNavigation {
+    transform: translateX(-110%);
+    opacity: 0;
+    pointer-events: none;
+}
 
 /* Provides a way to return to the normal portal layout. */
 .focus-mode-exit {
@@ -58,6 +93,8 @@ body {
     cursor: pointer;
 }
 
+/* Prevent the page behind the service from scrolling
+   while focus mode is active. */
 body.focus-mode-active {
     overflow: hidden;
 }
