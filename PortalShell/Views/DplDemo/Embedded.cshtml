@@ -1,0 +1,145 @@
+﻿@{
+    ViewData["Title"] = "Digital Personnel Licence";
+}
+
+<h1>Digital Personnel Licence</h1>
+
+<p>
+    This page demonstrates an existing service displayed within the portal shell.
+</p>
+
+<p>
+    <strong>Proof of concept note:</strong>
+    This is an early demonstration of the larger service view.
+    The final interaction would be adjusted to work well across different devices.
+</p>
+
+@* Keeps the original space available while the embedded service
+   temporarily moves into full-screen focus mode. *@
+<div id="serviceContainer"
+     class="embedded-service-container">
+
+    <iframe id="embeddedService"
+            class="embedded-service"
+            src="https://localhost:44302/IDV"
+            title="Digital Personnel Licence">
+    </iframe>
+
+</div>
+
+@* Provides a visible way to return to the normal portal layout.
+   The Escape key can also be used. *@
+<button id="exitFocusMode"
+        type="button"
+        class="focus-mode-exit"
+        hidden>
+    Exit focus mode
+</button>
+
+<script>
+    // Length of the focus-mode animation.
+    const focusModeAnimationDuration = 350;
+
+    // Get references to the elements used by focus mode.
+    const embeddedService = document.getElementById("embeddedService");
+    const serviceContainer = document.getElementById("serviceContainer");
+    const exitFocusMode = document.getElementById("exitFocusMode");
+
+    // Tracks the current focus-mode state.
+    let focusModeActive = false;
+    let focusModeTransitioning = false;
+
+    // Smoothly expand the embedded service from its current position
+    // to the full browser content area.
+    function enterFocusMode() {
+        if (focusModeActive || focusModeTransitioning) {
+            return;
+        }
+
+        focusModeActive = true;
+        focusModeTransitioning = true;
+
+        // Remember the service's current position and size before
+        // moving it into the full-screen layer.
+        const startPosition = serviceContainer.getBoundingClientRect();
+
+        embeddedService.style.top = `${startPosition.top}px`;
+        embeddedService.style.left = `${startPosition.left}px`;
+        embeddedService.style.width = `${startPosition.width}px`;
+        embeddedService.style.height = `${startPosition.height}px`;
+
+        embeddedService.classList.add("focus-mode");
+
+        // Force the browser to recognize the starting position
+        // before beginning the animation.
+        void embeddedService.offsetWidth;
+
+        document.body.classList.add("focus-mode-active");
+        exitFocusMode.hidden = false;
+
+        // Animate the service to full screen.
+        requestAnimationFrame(function () {
+            embeddedService.style.top = "0";
+            embeddedService.style.left = "0";
+            embeddedService.style.width = "100vw";
+            embeddedService.style.height = "100vh";
+        });
+
+        setTimeout(function () {
+            focusModeTransitioning = false;
+        }, focusModeAnimationDuration);
+    }
+
+    // Smoothly return the embedded service to its original position.
+    function leaveFocusMode() {
+        if (!focusModeActive || focusModeTransitioning) {
+            return;
+        }
+
+        focusModeTransitioning = true;
+
+        const endPosition = serviceContainer.getBoundingClientRect();
+
+        // Restore the surrounding portal shell while the service
+        // shrinks back into its normal position.
+        document.body.classList.remove("focus-mode-active");
+        exitFocusMode.hidden = true;
+
+        embeddedService.style.top = `${endPosition.top}px`;
+        embeddedService.style.left = `${endPosition.left}px`;
+        embeddedService.style.width = `${endPosition.width}px`;
+        embeddedService.style.height = `${endPosition.height}px`;
+
+        setTimeout(function () {
+            embeddedService.classList.remove("focus-mode");
+
+            embeddedService.style.top = "";
+            embeddedService.style.left = "";
+            embeddedService.style.width = "";
+            embeddedService.style.height = "";
+
+            focusModeActive = false;
+            focusModeTransitioning = false;
+        }, focusModeAnimationDuration);
+    }
+
+    // POC note:
+    // Mouse movement is used here to demonstrate the focus-mode concept.
+    // A production version would likely use a dedicated expand control
+    // for more consistent behaviour across devices.
+    embeddedService.addEventListener("mouseenter", function () {
+        if (!focusModeActive && !focusModeTransitioning) {
+            enterFocusMode();
+        }
+    });
+
+    // Allow the user to return to the normal portal layout.
+    exitFocusMode.addEventListener("click", leaveFocusMode);
+
+    // Escape provides a keyboard-friendly way to leave focus mode.
+    document.addEventListener("keydown", function (event) {
+        if (event.key === "Escape") {
+            leaveFocusMode();
+        }
+    });
+</script>

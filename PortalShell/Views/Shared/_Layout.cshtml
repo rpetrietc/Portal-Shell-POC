@@ -4,6 +4,7 @@
     var currentPath = Context.Request.Path;
     var isHome = currentPath == "/";
     var isServiceDemo = currentPath.StartsWithSegments("/ServiceDemo");
+    var isDplDemo = currentPath.StartsWithSegments("/DplDemo");
 }
 
 <!DOCTYPE html>
@@ -77,6 +78,19 @@
             {
                 <gcds-nav-link href="/ServiceDemo/Embedded">
                     Embedded service demo
+                </gcds-nav-link>
+            }
+
+            @if (isDplDemo)
+            {
+                <gcds-nav-link href="/DplDemo/Embedded" current>
+                    Digital Personnel Licence
+                </gcds-nav-link>
+            }
+            else
+            {
+                <gcds-nav-link href="/DplDemo/Embedded">
+                    Digital Personnel Licence
                 </gcds-nav-link>
             }
 
