@@ -1,34 +1,65 @@
-﻿<!DOCTYPE html>
+﻿@{
+    var pageTitle = ViewData["Title"]?.ToString() ?? "Connected Service";
+}
+
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>@ViewData["Title"] - ConnectedService</title>
-    <script type="importmap"></script>
-    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
-    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
-    <link rel="stylesheet" href="~/ConnectedService.styles.css" asp-append-version="true" />
+
+    <title>@pageTitle - Connected Service</title>
+
+    @* Government of Canada Design System components. *@
+    <link rel="stylesheet"
+          href="https://cdn.design-system.alpha.canada.ca/@@cdssnc/gcds-components@0.43.1/dist/gcds/gcds.css" />
+
+    <script type="module"
+            src="https://cdn.design-system.alpha.canada.ca/@@cdssnc/gcds-components@0.43.1/dist/gcds/gcds.esm.js">
+    </script>
+
+    <link rel="stylesheet"
+          href="https://cdn.design-system.alpha.canada.ca/@@gcds-core/css-shortcuts@1.0.1/dist/gcds-css-shortcuts.min.css" />
+
+    <link rel="stylesheet"
+          href="~/css/site.css"
+          asp-append-version="true" />
 </head>
+
 <body>
+
+    @* Standard Government of Canada header for this service. *@
+    <gcds-header lang-href="#"
+                 skip-to-href="#main-content">
+    </gcds-header>
+
+    @* Shared portal navigation supplied by the central portal. *@
     <portal-navigation portal-url="https://localhost:7065"
                        current-app="Connected service">
     </portal-navigation>
-    <div class="container">
-        <main role="main" class="pb-3">
-            @RenderBody()
-        </main>
-    </div>
 
-    <footer class="border-top footer text-muted">
-        <div class="container">
-            &copy; 2026 - ConnectedService - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
-        </div>
-    </footer>
-    <script src="~/lib/jquery/dist/jquery.min.js"></script>
-    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="~/js/site.js" asp-append-version="true"></script>
+    <gcds-grid tag="div"
+               container="xl"
+               columns="1fr"
+               centered>
+
+        <main id="main-content"
+              role="main"
+              style="padding-top: 2rem; padding-bottom: 3rem;">
+
+            @RenderBody()
+
+        </main>
+
+    </gcds-grid>
+
+    @* Standard Government of Canada footer. *@
+    <gcds-footer></gcds-footer>
+
     @await RenderSectionAsync("Scripts", required: false)
 
+    @* The shared component itself is hosted by the central portal. *@
     <script src="https://localhost:7065/js/portal-navigation.js"></script>
+
 </body>
 </html>
