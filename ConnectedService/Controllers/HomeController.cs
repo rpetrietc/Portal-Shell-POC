@@ -1,16 +1,25 @@
+using GoC.WebTemplate.Components.Core.Services;
+using GoC.WebTemplate.CoreMVC.Controllers;
 using System.Diagnostics;
 using Microsoft.AspNetCore.Mvc;
 using ConnectedService.Models;
 
 namespace ConnectedService.Controllers;
 
-public class HomeController : Controller
+public class HomeController : WebTemplateBaseController
 {
     private readonly ILogger<HomeController> _logger;
 
-    public HomeController(ILogger<HomeController> logger)
+    public HomeController(
+        ModelAccessor modelAccessor,
+        ILogger<HomeController> logger)
+        : base(modelAccessor)
     {
         _logger = logger;
+
+        // Sets the application name displayed by the
+        // Government of Canada Web Template.
+        WebTemplateModel.HeaderTitle = "Connected Service";
     }
 
     public IActionResult Index()
@@ -26,6 +35,9 @@ public class HomeController : Controller
     [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
     public IActionResult Error()
     {
-        return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
+        return View(new ErrorViewModel
+        {
+            RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier
+        });
     }
 }
