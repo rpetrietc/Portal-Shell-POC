@@ -1,5 +1,6 @@
 <Solution>
   <Project Path="ConnectedService/ConnectedService.csproj" />
   <Project Path="PortalAdmin/PortalAdmin.csproj" />
+  <Project Path="PortalData/PortalData.csproj" />
   <Project Path="PortalShell/PortalShell.csproj" />
 </Solution>
