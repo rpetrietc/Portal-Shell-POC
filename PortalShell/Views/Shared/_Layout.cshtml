@@ -1,10 +1,21 @@
-﻿@{
+﻿@using Microsoft.EntityFrameworkCore
+@inject PortalData.Data.PortalShellContext PortalShellContext
+
+@{
     var pageTitle = ViewData["Title"]?.ToString() ?? "Portal Shell";
 
     var currentPath = Context.Request.Path;
     var isHome = currentPath == "/";
     var isServiceDemo = currentPath.StartsWithSegments("/ServiceDemo");
     var isDplDemo = currentPath.StartsWithSegments("/DplDemo");
+
+    // Load enabled navigation links from the database.
+    // DisplayOrder controls the order they appear in the menu.
+    var databaseLinks = await PortalShellContext.PortalLinks
+        .AsNoTracking()
+        .Where(link => link.IsEnabled)
+        .OrderBy(link => link.DisplayOrder)
+        .ToListAsync();
 }
 
 <!DOCTYPE html>
@@ -109,6 +120,25 @@
             <gcds-nav-link href="#">
                 Start a service request
             </gcds-nav-link>
+
+
+            @* These navigation entries come from the database
+               rather than being hard-coded in this layout. *@
+            @if (databaseLinks.Count > 0)
+            {
+                <div style="
+                        padding: 1.25rem 1rem 0.5rem;
+                        font-weight: 700;">
+                    Database Generated
+                </div>
+
+                @foreach (var link in databaseLinks)
+                {
+                    <gcds-nav-link href="@link.Url">
+                        @link.Title
+                    </gcds-nav-link>
+                }
+            }
 
         </gcds-side-nav>
 
