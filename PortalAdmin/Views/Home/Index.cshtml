@@ -1,8 +1,44 @@
-﻿@{
-    ViewData["Title"] = "Home Page";
+﻿@model IEnumerable<PortalData.Models.PortalLink>
+
+@{
+    ViewData["Title"] = "Portal Links";
 }
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://learn.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
-</div>
+<h1>Portal Links</h1>
+
+<p>
+    This page displays the navigation records used by the Portal.
+</p>
+
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th>Id</th>
+            <th>Title</th>
+            <th>URL</th>
+            <th>Display Order</th>
+            <th>Enabled</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var link in Model)
+        {
+            <tr>
+                <td>@link.Id</td>
+                <td>@link.Title</td>
+                <td>@link.Url</td>
+                <td>@link.DisplayOrder</td>
+                <td>
+                    @if (link.IsEnabled)
+                    {
+                        <span class="badge bg-success">Yes</span>
+                    }
+                    else
+                    {
+                        <span class="badge bg-secondary">No</span>
+                    }
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
