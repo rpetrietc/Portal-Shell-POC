@@ -10,6 +10,13 @@
     This page displays the navigation records used by the Portal.
 </p>
 
+<p>
+    <a asp-action="Create"
+       class="btn btn-primary">
+        Create Portal Link
+    </a>
+</p>
+
 <table class="table table-striped">
     <thead>
         <tr>
@@ -20,6 +27,7 @@
             <th>Enabled</th>
         </tr>
     </thead>
+
     <tbody>
         @foreach (var link in Model)
         {
@@ -31,11 +39,15 @@
                 <td>
                     @if (link.IsEnabled)
                     {
-                        <span class="badge bg-success">Yes</span>
+                        <span class="badge bg-success">
+                            Yes
+                        </span>
                     }
                     else
                     {
-                        <span class="badge bg-secondary">No</span>
+                        <span class="badge bg-secondary">
+                            No
+                        </span>
                     }
                 </td>
             </tr>

@@ -32,6 +32,28 @@ public class HomeController : Controller
         return View(portalLinks);
     }
 
+    [HttpGet]
+    public IActionResult Create()
+    {
+        return View();
+    }
+
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> Create(PortalLink portalLink)
+    {
+        if (!ModelState.IsValid)
+        {
+            return View(portalLink);
+        }
+
+        // Add the new navigation record to the shared portal database.
+        _portalShellContext.PortalLinks.Add(portalLink);
+        await _portalShellContext.SaveChangesAsync();
+
+        return RedirectToAction(nameof(Index));
+    }
+
     public IActionResult Privacy()
     {
         return View();
