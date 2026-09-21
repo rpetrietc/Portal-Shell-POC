@@ -1,4 +1,6 @@
 using GoC.WebTemplate.Components.Core.Services;
+using Microsoft.EntityFrameworkCore;
+using PortalShell.Data;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -11,6 +13,11 @@ builder.Services.AddModelAccessor();
 
 // Configures the English/French request localization used by the template.
 builder.Services.ConfigureGoCTemplateRequestLocalization();
+
+// Add SQLite database support for simple Portal data such as
+// database-driven links used in the proof of concept.
+builder.Services.AddDbContext<PortalShellContext>(options =>
+    options.UseSqlite("Data Source=portalshell.db"));
 
 var app = builder.Build();
 
