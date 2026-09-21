@@ -54,6 +54,53 @@ public class HomeController : Controller
         return RedirectToAction(nameof(Index));
     }
 
+    [HttpGet]
+    public async Task<IActionResult> Edit(int id)
+    {
+        // Load the existing record that the user wants to update.
+        var portalLink = await _portalShellContext.PortalLinks.FindAsync(id);
+
+        if (portalLink == null)
+        {
+            return NotFound();
+        }
+
+        return View(portalLink);
+    }
+
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> Edit(int id, PortalLink portalLink)
+    {
+        if (id != portalLink.Id)
+        {
+            return NotFound();
+        }
+
+        if (!ModelState.IsValid)
+        {
+            return View(portalLink);
+        }
+
+        // Load the existing database record before applying the changes.
+        var existingLink = await _portalShellContext.PortalLinks.FindAsync(id);
+
+        if (existingLink == null)
+        {
+            return NotFound();
+        }
+
+        // Update only the fields that can be managed through this page.
+        existingLink.Title = portalLink.Title;
+        existingLink.Url = portalLink.Url;
+        existingLink.DisplayOrder = portalLink.DisplayOrder;
+        existingLink.IsEnabled = portalLink.IsEnabled;
+
+        await _portalShellContext.SaveChangesAsync();
+
+        return RedirectToAction(nameof(Index));
+    }
+
     public IActionResult Privacy()
     {
         return View();

@@ -25,6 +25,7 @@
             <th>URL</th>
             <th>Display Order</th>
             <th>Enabled</th>
+            <th>Actions</th>
         </tr>
     </thead>
 
@@ -36,6 +37,7 @@
                 <td>@link.Title</td>
                 <td>@link.Url</td>
                 <td>@link.DisplayOrder</td>
+
                 <td>
                     @if (link.IsEnabled)
                     {
@@ -49,6 +51,14 @@
                             No
                         </span>
                     }
+                </td>
+
+                <td>
+                    <a asp-action="Edit"
+                       asp-route-id="@link.Id"
+                       class="btn btn-sm btn-outline-primary">
+                        Edit
+                    </a>
                 </td>
             </tr>
         }
