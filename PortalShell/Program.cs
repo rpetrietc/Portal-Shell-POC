@@ -1,6 +1,6 @@
 using GoC.WebTemplate.Components.Core.Services;
 using Microsoft.EntityFrameworkCore;
-using PortalShell.Data;
+using PortalData.Data;
 
 var builder = WebApplication.CreateBuilder(args);
 

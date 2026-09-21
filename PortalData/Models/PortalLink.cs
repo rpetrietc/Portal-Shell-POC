@@ -1,4 +1,4 @@
-﻿namespace PortalShell.Models;
+﻿namespace PortalData.Models;
 
 public class PortalLink
 {

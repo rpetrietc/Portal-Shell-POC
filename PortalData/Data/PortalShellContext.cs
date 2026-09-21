@@ -1,7 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using PortalShell.Models;
+using PortalData.Models;
 
-namespace PortalShell.Data;
+namespace PortalData.Data;
 
 public class PortalShellContext : DbContext
 {
@@ -16,8 +16,7 @@ public class PortalShellContext : DbContext
     {
         base.OnModelCreating(modelBuilder);
 
-        // Seed a few sample links so the Portal can demonstrate
-        // database-driven navigation without requiring manual data entry.
+        // Seed sample links used to demonstrate database-driven navigation.
         modelBuilder.Entity<PortalLink>().HasData(
             new PortalLink
             {
