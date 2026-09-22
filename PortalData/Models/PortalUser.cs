@@ -9,4 +9,8 @@ public class PortalUser
 
     // Email address used to identify the user for this proof of concept.
     public string Email { get; set; } = string.Empty;
+
+    // Roles assigned to this user.
+    public ICollection<Role> Roles { get; set; }
+        = new List<Role>();
 }

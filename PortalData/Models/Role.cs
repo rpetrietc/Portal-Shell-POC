@@ -9,4 +9,12 @@ public class Role
 
     // Optional description explaining the purpose of the role.
     public string Description { get; set; } = string.Empty;
+
+    // Portal links that are assigned to this role.
+    public ICollection<PortalLink> PortalLinks { get; set; }
+        = new List<PortalLink>();
+
+    // Users that are assigned to this role.
+    public ICollection<PortalUser> Users { get; set; }
+        = new List<PortalUser>();
 }
