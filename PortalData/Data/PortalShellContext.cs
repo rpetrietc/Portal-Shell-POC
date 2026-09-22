@@ -10,11 +10,36 @@ public class PortalShellContext : DbContext
     {
     }
 
+    // Navigation links managed by the portal.
     public DbSet<PortalLink> PortalLinks => Set<PortalLink>();
+
+    // Roles used to group portal link access.
+    public DbSet<Role> Roles => Set<Role>();
+
+    // Users that can be assigned one or more roles.
+    public DbSet<PortalUser> Users => Set<PortalUser>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         base.OnModelCreating(modelBuilder);
+
+        // Store portal user records in a table named Users.
+        modelBuilder.Entity<PortalUser>()
+            .ToTable("Users");
+
+        // A role can contain many portal links, and the same portal link
+        // can be assigned to more than one role.
+        modelBuilder.Entity<Role>()
+            .HasMany(role => role.PortalLinks)
+            .WithMany(link => link.Roles)
+            .UsingEntity("RolePortalLinks");
+
+        // A user can have many roles, and the same role
+        // can be assigned to more than one user.
+        modelBuilder.Entity<PortalUser>()
+            .HasMany(user => user.Roles)
+            .WithMany(role => role.Users)
+            .UsingEntity("UserRoles");
 
         // Seed sample links used to demonstrate database-driven navigation.
         modelBuilder.Entity<PortalLink>().HasData(
