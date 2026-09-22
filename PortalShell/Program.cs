@@ -14,10 +14,13 @@ builder.Services.AddModelAccessor();
 // Configures the English/French request localization used by the template.
 builder.Services.ConfigureGoCTemplateRequestLocalization();
 
-// Add SQLite database support for simple Portal data such as
+// Add SQLite database support for simple portal data such as
 // database-driven links used in the proof of concept.
 builder.Services.AddDbContext<PortalShellContext>(options =>
-    options.UseSqlite("Data Source=portalshell.db"));
+    options.UseSqlite(
+        "Data Source=portalshell.db",
+        sqliteOptions =>
+            sqliteOptions.MigrationsAssembly("PortalShell")));
 
 var app = builder.Build();
 
@@ -25,7 +28,6 @@ var app = builder.Build();
 if (!app.Environment.IsDevelopment())
 {
     app.UseExceptionHandler("/Home/Error");
-    // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
     app.UseHsts();
 }
 
@@ -42,6 +44,5 @@ app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Home}/{action=Index}/{id?}")
     .WithStaticAssets();
-
 
 app.Run();
