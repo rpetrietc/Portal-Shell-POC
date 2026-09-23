@@ -50,8 +50,7 @@ public class RolesController : Controller
     {
         if (!ModelState.IsValid)
         {
-            // The available links are not posted back with the form,
-            // so reload them before displaying the form again.
+            // Reload the available links before redisplaying the form.
             viewModel.AvailablePortalLinks =
                 await _portalShellContext.PortalLinks
                     .AsNoTracking()
@@ -61,7 +60,7 @@ public class RolesController : Controller
             return View(viewModel);
         }
 
-        // Load the selected portal links from the database.
+        // Load the portal links selected for the new role.
         var selectedPortalLinks =
             await _portalShellContext.PortalLinks
                 .Where(link =>
@@ -77,6 +76,94 @@ public class RolesController : Controller
 
         // Save the role and its portal link relationships.
         _portalShellContext.Roles.Add(role);
+        await _portalShellContext.SaveChangesAsync();
+
+        return RedirectToAction(nameof(Index));
+    }
+
+    [HttpGet]
+    public async Task<IActionResult> Edit(int id)
+    {
+        // Load the role together with its current portal link assignments.
+        var role = await _portalShellContext.Roles
+            .Include(role => role.PortalLinks)
+            .FirstOrDefaultAsync(role => role.Id == id);
+
+        if (role == null)
+        {
+            return NotFound();
+        }
+
+        var viewModel = new RoleEditViewModel
+        {
+            Id = role.Id,
+            Name = role.Name,
+            Description = role.Description,
+
+            // Preselect the links currently assigned to this role.
+            SelectedPortalLinkIds = role.PortalLinks
+                .Select(link => link.Id)
+                .ToList(),
+
+            AvailablePortalLinks = await _portalShellContext.PortalLinks
+                .AsNoTracking()
+                .OrderBy(link => link.DisplayOrder)
+                .ToListAsync()
+        };
+
+        return View(viewModel);
+    }
+
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> Edit(
+        int id,
+        RoleEditViewModel viewModel)
+    {
+        if (id != viewModel.Id)
+        {
+            return NotFound();
+        }
+
+        if (!ModelState.IsValid)
+        {
+            // Reload the available links before redisplaying the form.
+            viewModel.AvailablePortalLinks =
+                await _portalShellContext.PortalLinks
+                    .AsNoTracking()
+                    .OrderBy(link => link.DisplayOrder)
+                    .ToListAsync();
+
+            return View(viewModel);
+        }
+
+        // Load the existing role and its current relationships.
+        var role = await _portalShellContext.Roles
+            .Include(role => role.PortalLinks)
+            .FirstOrDefaultAsync(role => role.Id == id);
+
+        if (role == null)
+        {
+            return NotFound();
+        }
+
+        role.Name = viewModel.Name;
+        role.Description = viewModel.Description;
+
+        // Remove the old link assignments before applying the new selection.
+        role.PortalLinks.Clear();
+
+        var selectedPortalLinks =
+            await _portalShellContext.PortalLinks
+                .Where(link =>
+                    viewModel.SelectedPortalLinkIds.Contains(link.Id))
+                .ToListAsync();
+
+        foreach (var portalLink in selectedPortalLinks)
+        {
+            role.PortalLinks.Add(portalLink);
+        }
+
         await _portalShellContext.SaveChangesAsync();
 
         return RedirectToAction(nameof(Index));

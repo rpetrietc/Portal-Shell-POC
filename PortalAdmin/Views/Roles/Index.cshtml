@@ -32,6 +32,7 @@ else
                 <th>Name</th>
                 <th>Description</th>
                 <th>Portal Links</th>
+                <th>Actions</th>
             </tr>
         </thead>
 
@@ -60,6 +61,14 @@ else
                                 None assigned
                             </span>
                         }
+                    </td>
+
+                    <td>
+                        <a asp-action="Edit"
+                           asp-route-id="@role.Id"
+                           class="btn btn-sm btn-outline-primary">
+                            Edit
+                        </a>
                     </td>
                 </tr>
             }
