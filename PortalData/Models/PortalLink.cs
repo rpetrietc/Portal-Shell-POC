@@ -15,4 +15,8 @@ public class PortalLink
 
     // Allows links to be enabled or disabled without deleting them.
     public bool IsEnabled { get; set; }
+
+    // Roles that are allowed to see this portal link.
+    public ICollection<Role> Roles { get; set; }
+        = new List<Role>();
 }
