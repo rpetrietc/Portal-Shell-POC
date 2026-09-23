@@ -1,0 +1,61 @@
+﻿@model IEnumerable<PortalData.Models.Role>
+
+@{
+    ViewData["Title"] = "Roles";
+}
+
+<h1>Roles</h1>
+
+<p>
+    This page displays the roles used to group portal link access.
+</p>
+
+@if (!Model.Any())
+{
+    <div class="alert alert-info">
+        No roles have been created yet.
+    </div>
+}
+else
+{
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>Id</th>
+                <th>Name</th>
+                <th>Description</th>
+                <th>Portal Links</th>
+            </tr>
+        </thead>
+
+        <tbody>
+            @foreach (var role in Model)
+            {
+                <tr>
+                    <td>@role.Id</td>
+                    <td>@role.Name</td>
+                    <td>@role.Description</td>
+
+                    <td>
+                        @if (role.PortalLinks.Count > 0)
+                        {
+                            <ul class="mb-0">
+                                @foreach (var link in role.PortalLinks
+                                                    .OrderBy(link => link.DisplayOrder))
+                                {
+                                    <li>@link.Title</li>
+                                }
+                            </ul>
+                        }
+                        else
+                        {
+                            <span class="text-muted">
+                                None assigned
+                            </span>
+                        }
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
